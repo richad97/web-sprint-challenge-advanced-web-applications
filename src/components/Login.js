@@ -1,15 +1,76 @@
-import React from 'react';
-import styled from 'styled-components';
+import axios from "axios";
+import React, { useState } from "react";
+import styled from "styled-components";
 
 const Login = () => {
-    
-    return(<ComponentContainer>
-        <ModalContainer>
-            <h1>Welcome to Blogger Pro</h1>
-            <h2>Please enter your account information.</h2>
-        </ModalContainer>
-    </ComponentContainer>);
-}
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [error, setError] = useState({
+    error: false,
+    errorMessage: "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    axios
+      .post("http://localhost:5000/api/login", credentials)
+      .then((res) => {
+        const data = res.data;
+        const token = res.data.token;
+
+        localStorage.setItem("token", token);
+        console.log(data);
+
+        setError({
+          error: false,
+          errorMessage: "",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setError({
+          error: true,
+          errorMessage: err.response.data,
+        });
+      });
+  };
+
+  const handleChange = (e) => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  return (
+    <ComponentContainer>
+      <ModalContainer>
+        <h1>Welcome to Blogger Pro</h1>
+        <h2>Please enter your account information.</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Username:
+            <input onChange={handleChange} name="username" id="username" />
+          </label>
+          <label>
+            Password:
+            <input onChange={handleChange} name="password" id="password" />
+          </label>
+          <button type="submit" id="submit">
+            Submit
+          </button>
+        </form>
+        {error.error === true ? (
+          <p id="error"> {error.errorMessage.error} </p>
+        ) : null}
+      </ModalContainer>
+    </ComponentContainer>
+  );
+};
 
 export default Login;
 
@@ -22,36 +83,36 @@ export default Login;
 //6. MAKE SURE TO ADD id="username", id="password", id="error" AND id="submit" TO THE APPROPRIATE DOM ELEMENTS. YOUR AUTOTESTS WILL FAIL WITHOUT THEM.
 
 const ComponentContainer = styled.div`
-    height: 70%;
-    justify-content: center;
-    align-items: center;
-    display:flex;
-`
+  height: 70%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+`;
 
 const ModalContainer = styled.div`
-    width: 500px;
-    background: white;
-    padding: 2rem;
-    text-align: center;
-`
+  width: 500px;
+  background: white;
+  padding: 2rem;
+  text-align: center;
+`;
 
 const Label = styled.label`
-    display: block;
-    text-align: left;
-    font-size: 1.5rem;
-`
+  display: block;
+  text-align: left;
+  font-size: 1.5rem;
+`;
 
 const FormGroup = styled.form`
-    padding:1rem;
-`
+  padding: 1rem;
+`;
 
 const Input = styled.input`
-    font-size: 1rem;
-    padding: 1rem 0;
-    width:100%;
-`
+  font-size: 1rem;
+  padding: 1rem 0;
+  width: 100%;
+`;
 
 const Button = styled.button`
-    padding:1rem;
-    width: 100%;
-`
+  padding: 1rem;
+  width: 100%;
+`;
