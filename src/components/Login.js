@@ -1,8 +1,11 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import styled from "styled-components";
 
 const Login = () => {
+  const { push } = useHistory();
+
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -29,6 +32,8 @@ const Login = () => {
           error: false,
           errorMessage: "",
         });
+
+        push("/view");
       })
       .catch((err) => {
         console.log(err);
